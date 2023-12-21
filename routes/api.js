@@ -1,38 +1,45 @@
 'use strict';
 
 const expect = require('chai').expect;
-const ConvertHandler = require('../controllers/convertHandler.js');
+const {
+  ConvertHandler,
+  ERROR_INVALID_NUMBER,
+  ERROR_INVALID_UNIT,
+} = require('../controllers/convertHandler.js');
 
 module.exports = function (app) {
-  
-  let convertHandler = new ConvertHandler();
-    app.route("/api/convert").get((res, req) => {
-      let input = req.query.input; //query which is comes after the ? to get an input data for eg localhost:3000/api/convert/?input
-      let initNum = convertHandler.getNum(input);
-      let initUnit = convertHandler.getUnit(input);
-      if(initNum === "invalid number" && initUnit ==="invalid unit") {
-        res.json("invalid number and unit");
-      }else if (initNum === "invalid number") {
-        res.json("invalid number")
-      }else if (initUnit === "invalid unit") {
-        res.json("invalid unit")
-      }else {
-        let returnNum = convertHandler.convert(initNum, initUnit)
-        let returnUnit = convertHandler.getReturnUnit(initUnit)
-        let toString = convertHandler.getString(
-          initNum,
-          initUnit,
-          returnNum,
-          returnUnit
-        )
-        res.json ({
-          initNum,
-          initUnit,
-          returnNum,
-          returnUnit,
-          string: toString,
-        })
-      }
-      
+  const convertHandler = new ConvertHandler();
+
+  app.route('/api/convert').get(function (req, res) {
+    const input = req.query.input;
+    const initNum = convertHandler.getNum(input);
+    const hasNumErr = initNum.toString().startsWith(ERROR_INVALID_NUMBER);
+
+    const initUnit = convertHandler.getUnit(input);
+    const hasUnitErr = initUnit.startsWith(ERROR_INVALID_UNIT);
+
+    if (hasNumErr && hasUnitErr) {
+      return res.json(`${ERROR_INVALID_NUMBER} and unit`);
+    } else if (hasNumErr) {
+      return res.json(ERROR_INVALID_NUMBER);
+    } else if (hasUnitErr) {
+      return res.json(ERROR_INVALID_UNIT);
+    }
+
+    const returnUnit = convertHandler.getReturnUnit(initUnit);
+    const returnNum = convertHandler.convert(initNum, initUnit);
+
+    return res.json({
+      initNum,
+      initUnit,
+      returnNum,
+      returnUnit,
+      string: convertHandler.getString(
+        initNum,
+        initUnit,
+        returnNum,
+        returnUnit
+      ),
     });
+  });
 };
