@@ -31,8 +31,46 @@ function ConvertHandler() {
     return result
   };
   
-
+this.getUnit = function(input) {
+    let result = numberStringSplitter(input)[1].toLowerCase();
+    switch(result){
+      case "km":
+      return "km"
+      case "gal":
+      return "gal"
+      case "lbs":
+      return "lbs"
+      case "mi":
+      return "mi"
+      case "l":
+      return "L"
+      case "kg":
+      return "kg"
+      default:
+        return undefined
+    }
+  };
   
+  this.getReturnUnit = function(initUnit) {
+    let unit = initUnit.toLowerCase()
+
+    switch(unit) {
+      case "km":
+        return "mi"
+      case "gal":
+        return "L"
+      case "lbs":
+        return "kg"
+      case "mi":
+        return "km"
+      case "l":
+        return "gal"
+      case "kg":
+        return "lbs"
+        default:
+          return undefined
+    }
+  };
  
   this.spellOutUnit = function(unit) {
     let result;
