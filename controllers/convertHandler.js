@@ -15,7 +15,21 @@ function checkDiv(possibleFraction) {
 
 function ConvertHandler() {
   
- 
+ this.getNum = function(input) {
+    let result = numberStringSplitter(input)[0];
+    let nums = checkDiv(result)
+
+    if(!nums) {
+      return undefined;
+    }
+    let num1 = nums[0]
+    let num2 = nums[1] || "1"
+    result = parseFloat(num1) / parseFloat(num2)
+    if(isNaN(num1) || isNaN(num2)) {
+      return undefined
+    }
+    return result
+  };
   
 
   
